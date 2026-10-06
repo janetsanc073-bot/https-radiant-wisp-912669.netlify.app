@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>¡Monta la urdimbre!</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#101827,#17283b 55%,#0d3a3d);color:#f6f7f8;min-height:100vh}
+.wrap{max-width:900px;margin:auto;padding:18px}.card{background:#ffffff12;border:1px solid #ffffff20;border-radius:22px;padding:22px;margin:12px 0;backdrop-filter:blur(8px)}
+h1{font-size:clamp(30px,7vw,52px);margin:8px 0;color:#f2c879}h2{margin-top:4px}.sub{opacity:.8}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.badge{padding:8px 12px;border-radius:999px;background:#f2c879;color:#15202b;font-weight:800}
+button{border:0;border-radius:14px;padding:13px 16px;font-weight:800;font-size:16px;cursor:pointer;background:#f2c879;color:#15202b;margin:5px}.secondary{background:#ffffff18;color:white;border:1px solid #ffffff2b}
+.screen{display:none}.screen.active{display:block}.teamgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.team{padding:18px;border-radius:18px;background:#ffffff0d;border:1px solid #ffffff20}.team button{width:100%}
+.items{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}.item{padding:15px;border-radius:14px;background:#ffffff14;border:1px solid #ffffff25;cursor:grab;text-align:center;font-weight:800}.selected{outline:3px solid #f2c879;box-shadow:0 0 0 4px #f2c87955}
+.dropzones{display:grid;gap:10px}.zone{min-height:55px;padding:10px;border:2px dashed #ffffff35;border-radius:13px;background:#ffffff08}.zone span{display:inline-block;background:#f2c879;color:#15202b;padding:8px 10px;border-radius:10px;margin:3px;font-weight:800}
+.choice{display:block;width:100%;text-align:left;background:#ffffff12;color:white;border:1px solid #ffffff25;margin:9px 0}.choice.correct{background:#174d38}.choice.wrong{background:#5b2930}.feedback{margin-top:12px;font-weight:700}.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.bucket{min-height:150px;padding:12px;border:2px dashed #ffffff30;border-radius:16px}.tile{display:inline-block;margin:5px;padding:10px;border-radius:11px;background:#f2c879;color:#15202b;font-weight:800;cursor:pointer}.ok{color:#8ee7b6}.bad{color:#ff9eaa}
+.small{font-size:.9rem;opacity:.8}.score{font-size:18px;font-weight:800}
+@media(max-width:600px){.items,.cols,.teamgrid{grid-template-columns:1fr}.wrap{padding:10px}.card{padding:16px}}
+</style></head>
+<body><main class="wrap">
+<section id="home" class="screen active card">
+<div class="top"><span class="badge">INGENIERÍA TEXTIL · 1TM13</span><span>🧵</span></div>
+<h1>¡Monta la urdimbre!</h1><p class="sub">Actividad relámpago · 3 retos · ~5 minutos</p>
+<p>Divídanse en <b>Equipo 1</b> y <b>Equipo 2</b>. Elijan su equipo y comiencen. Cada reto vale puntos.</p>
+<div class="teamgrid"><div class="team"><h2>🧶 Equipo 1</h2><button onclick="start(1)">Entrar como Equipo 1</button></div><div class="team"><h2>🧵 Equipo 2</h2><button onclick="start(2)">Entrar como Equipo 2</button></div></div>
+<p class="small">Tip: una sola persona puede compartir pantalla para registrar la respuesta, o cada equipo puede trabajar desde su celular.</p>
+</section>
+
+<section id="r1" class="screen card"><div class="top"><span class="badge">RETO 1 · 2 pts</span><span class="score" id="score1">Equipo 1 · 0 pts</span></div>
+<h2>Ordena el recorrido</h2><p>Selecciona las tarjetas <b>en el orden correcto</b> del recorrido de la urdimbre. Si te equivocas, puedes reiniciar.</p>
+<div class="items" id="items"></div><div class="dropzones" id="order"></div>
+<button onclick="checkOrder()">Comprobar</button><button class="secondary" onclick="resetOrder()">Reiniciar</button><div id="fb1" class="feedback"></div>
+</section>
+
+<section id="r2" class="screen card"><div class="top"><span class="badge">RETO 2 · 3 pts</span><span class="score" id="score2">0 pts</span></div>
+<h2>Calada vs. Jacquard</h2><p>Toca cada elemento para enviarlo al grupo que corresponde.</p>
+<div class="card" style="padding:14px;margin-top:12px">
+<h3 style="margin:0 0 8px">🧩 Elementos por clasificar</h3>
+<p class="small">Primero toca una tarjeta y después toca el grupo donde quieres colocarla.</p>
+<div class="items" id="tiles"></div>
+</div>
+<div class="cols">
+<div class="bucket" id="caladaBucket" onclick="placeSelected('calada')"><h3>⚙️ Telar de calada</h3><div id="calada"></div></div>
+<div class="bucket" id="jacBucket" onclick="placeSelected('jac')"><h3>✨ Jacquard</h3><div id="jac"></div></div>
+</div>
+<button onclick="checkClass()">Comprobar</button><button class="secondary" onclick="resetClass()">Reiniciar</button><div id="fb2" class="feedback"></div>
+</section>
+
+<section id="r3" class="screen card"><div class="top"><span class="badge">RETO 3 · 5 pts</span><span class="score" id="score3">0 pts</span></div>
+<h2>¿Qué pasaría si...?</h2><p><b>Uno de los hilos de la urdimbre quedó demasiado flojo durante el montaje. ¿Qué podría pasar?</b></p>
+<div id="choices"></div><div id="fb3" class="feedback"></div>
+</section>
+
+<section id="final" class="screen card"><div class="badge">🏆 RESULTADO FINAL</div><h1>¡Montaje de la urdimbre completado!</h1><h2 id="finalscore"></h2>
+<div class="card"><h3>📌 Respuestas para tu exposición</h3>
+<p><b>Reto 1:</b> Plegador → guía-hilos → lizos → Jacquard → peine → tejido. El hilo avanza desde el plegador hacia los elementos de control y formación de la calada hasta llegar al tejido.</p>
+<p><b>Reto 2:</b> Calada: plegador, guía-hilos, lizos y peine. Jacquard: mecanismo/cilindro o sistema Jacquard que permite controlar hilos de urdimbre individualmente para formar dibujos complejos.</p>
+<p><b>Reto 3:</b> Un hilo demasiado flojo puede provocar tensión desigual, problemas en la formación de la calada y defectos en el tejido. La tensión uniforme ayuda a mantener un proceso estable.</p></div>
+<button onclick="location.reload()">Jugar de nuevo</button></section>
+</main>
+<script>
+let team=1,score=0,order=[],placed={},classif={},r2done=false,selectedClass=null;
+const correctOrder=["PLEGADOR","GUÍA-HILOS","LIZOS","JACQUARD","PEINE","TEJIDO"];
+const caladaSet=new Set(["PLEGADOR","GUÍA-HILOS","LIZOS","PEINE"]);
+const jacSet=new Set(["MECANISMO JACQUARD","ARNÉS DE CONTROL","SELECCIÓN INDIVIDUAL"]);
+function start(t){team=t;score=0;classif={};selectedClass=null;show("r1");document.getElementById("score1").textContent=`Equipo ${team} · 0 pts`;renderOrder()}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active")}
+function renderOrder(){let box=document.getElementById("items");box.innerHTML="";[...correctOrder].sort(()=>Math.random()-.5).forEach(x=>{let b=document.createElement("div");b.className="item";b.textContent=x;b.onclick=()=>pickOrder(x,b);box.appendChild(b)});document.getElementById("order").innerHTML="<div class='zone'>Tu recorrido aparecerá aquí…</div>";order=[]}
+function pickOrder(x,b){if(order.includes(x))return;order.push(x);b.classList.add("selected");let z=document.getElementById("order");if(z.firstElementChild?.textContent.includes("Tu recorrido"))z.innerHTML="";let s=document.createElement("span");s.textContent=`${order.length}. ${x}`;s.style.display="block";s.style.padding="8px";s.style.background="#ffffff12";s.style.margin="4px";s.style.borderRadius="10px";z.appendChild(s)}
+function resetOrder(){renderOrder();document.getElementById("fb1").textContent=""}
+function checkOrder(){let ok=order.length===6&&order.every((x,i)=>x===correctOrder[i]);let fb=document.getElementById("fb1");if(ok){score+=2;fb.innerHTML="<span class='ok'>✅ ¡Correcto! +2 puntos.</span>";document.getElementById("score1").textContent=`Equipo ${team} · ${score} pts`;setTimeout(()=>{show("r2");renderClass()},700)}else fb.innerHTML="<span class='bad'>❌ Revisa el recorrido y vuelve a intentarlo.</span>"}
+function renderClass(){
+classif={}; selectedClass=null;
+document.getElementById("calada").innerHTML="";document.getElementById("jac").innerHTML="";
+let box=document.getElementById("tiles");box.innerHTML="";
+["PLEGADOR","GUÍA-HILOS","LIZOS","PEINE","MECANISMO JACQUARD","ARNÉS DE CONTROL","SELECCIÓN INDIVIDUAL"].sort(()=>Math.random()-.5).forEach(x=>{
+let b=document.createElement("span");b.className="tile";b.textContent=x;b.id="tile-"+x.replace(/\\W/g,"");
+b.onclick=(e)=>{e.stopPropagation(); if(classif[x])return; selectedClass=x; document.querySelectorAll("#tiles .tile").forEach(t=>t.classList.remove("selected")); b.classList.add("selected");};
+box.appendChild(b);
+});
+}
+function placeSelected(dest){
+if(!selectedClass)return;
+let b=[...document.querySelectorAll("#tiles .tile")].find(t=>t.textContent===selectedClass);
+if(!b)return;
+document.getElementById(dest).appendChild(b);b.classList.remove("selected");classif[selectedClass]=dest;selectedClass=null;
+}
+function resetClass(){renderClass();document.getElementById("fb2").textContent="";}
+
+function checkClass(){let ok=Object.keys(classif).length===7&&Object.entries(classif).every(([x,d])=>(caladaSet.has(x)?d==="calada":d==="jac"));let fb=document.getElementById("fb2");if(ok){score+=3;fb.innerHTML="<span class='ok'>✅ ¡Excelente! +3 puntos.</span>";document.getElementById("score2").textContent=`${score} pts`;setTimeout(()=>{show("r3");renderChoices()},700)}else fb.innerHTML="<span class='bad'>❌ Hay elementos en el grupo equivocado. Corrige y vuelve a comprobar.</span>"}
+function renderChoices(){let c=document.getElementById("choices");c.innerHTML="";["La tensión desigual puede causar una formación irregular de la calada y defectos en el tejido.","El hilo flojo hace que el telar produzca automáticamente un dibujo Jacquard.","No pasa nada: todos los hilos pueden tener cualquier tensión."].forEach((x,i)=>{let b=document.createElement("button");b.className="choice";b.textContent=x;b.onclick=()=>answer(i,b);c.appendChild(b)})}
+function answer(i,b){if(document.getElementById("fb3").textContent)return;let fb=document.getElementById("fb3");if(i===0){score+=5;b.classList.add("correct");fb.innerHTML="<span class='ok'>✅ Correcto. La tensión desigual puede alterar la formación de la calada y favorecer defectos; por eso el montaje busca una tensión uniforme.</span>"}else{b.classList.add("wrong");fb.innerHTML="<span class='bad'>❌ Esa no es. La tensión de la urdimbre sí influye en la estabilidad de la calada y la calidad del tejido.</span>";return}document.getElementById("score3").textContent=`${score} pts`;setTimeout(()=>{show("final");document.getElementById("finalscore").textContent=`Equipo ${team}: ${score}/10 puntos`},900)}
+</script></body></html>
